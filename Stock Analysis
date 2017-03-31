@@ -1,0 +1,56 @@
+#creating the structure of code
+import numpy as np
+import pandas as pd
+from pandas_datareader import data as web
+import seaborn as sns; sns.set()
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+#establish shares(index) to analyzed
+SPY = web.DataReader('SPY', data_source='yahoo')
+VXX = web.DataReader('VXX', data_source='yahoo')
+AAPL = web.DataReader('AAPL', data_source='yahoo')
+DBO = web.DataReader('DBO', data_source='yahoo')
+S = web.DataReader('S', data_source='yahoo')
+BAC = web.DataReader('BAC', data_source='yahoo')
+X = web.DataReader('X', data_source='yahoo')
+USO = web.DataReader('USO', data_source='yahoo')
+MSFT = web.DataReader('MSFT', data_source='yahoo')
+QQQ = web.DataReader('QQQ', data_source='yahoo')
+USO = web.DataReader('USO', data_source='yahoo')
+GOOG = web.DataReader('GOOG', data_source='yahoo')
+IBM = web.DataReader('IBM', data_source='yahoo')
+EBAY = web.DataReader('EBAY', data_source='yahoo')
+GLD = web.DataReader('GLD', data_source='yahoo')
+GDX = web.DataReader('GDX', data_source='yahoo')
+AOM = web.DataReader('AOM', data_source='yahoo')
+SPX = web.DataReader('SPX', data_source='yahoo')
+JUSRX = web.DataReader('JUSRX', data_source='yahoo')
+OIGYX = web.DataReader('OIGYX', data_source='yahoo')
+CHTTX = web.DataReader('CHTTX', data_source='yahoo')
+
+
+#to plot close
+AAPL['Adj Close'].plot(figsize=(10, 6));
+
+#put this in order to show graph
+plt.show()
+
+# fully vectorized calculation of 50 days moving average/trend
+AAPL['MA50'] = pd.rolling_mean(AAPL['Adj Close'], window=50)
+
+#to plot moving average
+AAPL[['Adj Close', 'MA50']].plot(figsize=(10, 6)); #to plot moving average
+
+#Retrieving Index Level Data (SP500 in this case, can be any stock or index)
+SPX = web.DataReader('^GSPC', data_source='yahoo', start='2005-1-1')
+
+#calculate the two SMAs as follows
+SPX['SMA42'] = SPX['Adj Close'].rolling(window=42).mean()
+SPX['SMA252'] = SPX['Adj Close'].rolling(window=252).mean()
+SPX.dropna(inplace=True)
+SPX[['Adj Close', 'SMA42', 'SMA252']].plot(figsize=(10, 6));
+
+# vectorized evaluation of the trading condition/signal generation
+SPX['position'] = np.where(SPX['SMA42'] > SPX['SMA252'], 1, -1)
